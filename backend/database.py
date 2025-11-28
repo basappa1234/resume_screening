@@ -17,7 +17,11 @@ class ScreeningDatabase:
         # Use absolute path for database to ensure it works in different environments
         if db_path == 'screening_history.db':
             import os
-            db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'screening_history.db')
+            # For Vercel, we need to use /tmp directory for writable files
+            if os.environ.get('VERCEL'):
+                db_path = '/tmp/screening_history.db'
+            else:
+                db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'screening_history.db')
         self.db_path = db_path
         self.init_database()
     

@@ -29,7 +29,13 @@ static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'fro
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 app.secret_key = os.urandom(24)
-app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+
+# Configure upload folder - use /tmp for Vercel
+if os.environ.get('VERCEL'):
+    app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
+else:
+    app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 app.config['ALLOWED_EXTENSIONS'] = {'pdf', 'docx', 'doc', 'txt'}
 
@@ -426,6 +432,9 @@ def export_session(session_id, format):
     else:
         return "Invalid format", 400
 
+
+# Make sure the app is accessible for Vercel
+application = app
 
 if __name__ == '__main__':
     # Get port from environment variable or default to 5000
