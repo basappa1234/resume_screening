@@ -1,12 +1,22 @@
 {
   "builds": [{
     "src": "backend/app.py",
-    "use": "@vercel/python"
+    "use": "@vercel/python",
+    "config": {
+      "maxLambdaSize": "50mb",
+      "runtime": "python3.9"
+    }
   }],
   "routes": [
     {
       "src": "/(.*)",
       "dest": "backend/app.py"
     }
-  ]
+  ],
+  "build": {
+    "env": {
+      "UV_HTTP_TIMEOUT": "300",
+      "PIP_DISABLE_PIP_VERSION_CHECK": "1"
+    }
+  }
 }
